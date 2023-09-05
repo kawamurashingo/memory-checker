@@ -1,6 +1,6 @@
-# Swap Usage Per Process Script
+# Memory/Swap Usage Per Process Script
 
-This script displays the swap usage for each process in MB. Additionally, it informs the user about the total swap usage and utilization percentage for the system.
+This script displays the memory/swap usage for each process in MB. Additionally, it informs the user about the total memory/swap usage and utilization percentage for the system.
 
 ## Requirements
 
@@ -13,12 +13,14 @@ This script displays the swap usage for each process in MB. Additionally, it inf
 1. Make the script file (saved as something like `swap_usage.sh`) executable:
 
    ```
+   chmod +x memory_usage.sh
    chmod +x swap_usage.sh
    ```
 
 2. Execute the script:
 
    ```
+   ./memory_usage.sh
    ./swap_usage.sh
    ```
 
