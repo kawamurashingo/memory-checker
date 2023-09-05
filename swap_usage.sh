@@ -1,5 +1,9 @@
 #!/bin/bash
 
+declare -A process_swap
+declare -A process_cmd
+declare -A process_user
+
 total_swap_kb=$(free -k | awk '/Swap:/ {print $2}')
 used_swap_kb=$(free -k | awk '/Swap:/ {print $3}')
 
@@ -16,10 +20,17 @@ for pid in $(ls /proc | grep '^[0-9]*$'); do
             uid=$(awk '/^Uid:/ {print $2}' /proc/$pid/status)
             user=$(getent passwd $uid | cut -d: -f1)
             cmdline=$(cat /proc/$pid/cmdline | tr '\0' ' ' | head -c 50)
-            printf "User: %10s - PID: %6s - Swap Used: %6s MB - Command: %s\n" "$user" "$pid" "$swap_mb" "$cmdline"
+            process_swap[$pid]=$swap_mb
+            process_cmd[$pid]=$cmdline
+            process_user[$pid]=$user
         fi
     fi
-done | sort -n -k6,6
+done 
+
+# Swap Usedが大きい順にソートして出力
+for pid in $(for key in "${!process_swap[@]}"; do echo "$key:${process_swap[$key]}"; done | sort -t: -k2 -nr | cut -d: -f1); do
+    printf "User: %10s - PID: %6s - Swap Used: %6s MB - Command: %s\n" "${process_user[$pid]}" "$pid" "${process_swap[$pid]}" "${process_cmd[$pid]}"
+done
 
 echo "Total Swap: $total_swap_mb MB"
 echo "Used Swap: $used_swap_mb MB"
